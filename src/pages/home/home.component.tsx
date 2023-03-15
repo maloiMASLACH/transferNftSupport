@@ -26,11 +26,11 @@ export const HomeComponent: React.FC = () => {
 
   return (
     <div className="homeWrapper">
-      {!nftsId.length && (
+      {!!nftsId.length && (
         <>
           <h2>Your NFTs</h2>
           <div className="nftList">
-            {[12, 13].map((id) => (
+            {nftsId.map((id) => (
               <NftCard id={id} key={id} />
             ))}
           </div>

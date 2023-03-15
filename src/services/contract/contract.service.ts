@@ -4,8 +4,8 @@ import { toast } from 'react-toastify'
 import { BehaviorSubject } from 'rxjs'
 import { getProvider, IProviderRpcError } from 'wallets-wrapper'
 
-import abi from '@/config/abiGXAG.json'
 import { config } from '@/config/config'
+import customAbi from '@/config/erc721.abi.json'
 import { chainData } from '@/constants/chainData'
 import usersMockData from '@/constants/users.json'
 
@@ -47,30 +47,25 @@ export class Contract implements IContract {
     const data = this.data$.getValue()
 
     const provider = getProvider(data.network)
-    this.contract = new ethers.Contract(data.address, abi, provider)
+    this.contract = new ethers.Contract(data.address, customAbi, provider)
   }
 
   async getNftsByUserAddress() {
     try {
       if (this.metamask) {
-        const data = await this.data$.getValue()
-        const contract = await this.metamask.getStandardContract(data.address)
-        await contract.init()
-        const balance = await contract.getBalance()
+        const address = await this.metamask.getAddress()
 
-        const asd = await contract.getContract().ownerOf(13)
+        const nftsId: number[] = []
 
-        console.log(asd)
-
-        let nftsData: typeof usersMockData = []
-
-        if (balance[0].balance) {
-          nftsData = usersMockData.filter(
-            (operation) => operation['The last wallet'] === balance[0].address,
-          )
+        const promises = []
+        for (let i = 1; i <= usersMockData.length; i++) {
+          const promise = this.contract.ownerOf(i)
+          promises.push(promise)
         }
 
-        const nftsId = nftsData.map((elem) => elem['Purtchasable ID'])
+        await Promise.all(promises)
+          .then((results) => results.map((el, index) => el === address && nftsId.push(index + 1)))
+          .catch((error) => console.error(error))
 
         return nftsId
       }

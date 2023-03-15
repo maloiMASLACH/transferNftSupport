@@ -13,9 +13,10 @@
 }
 
 .nftWrapper .nftImage {
-  width: 100%;
+  width: 300px;
   height: 300px;
   border-radius: 25px 25px 0 0;
+  object-fit: cover;
 }
 
 .nftWrapper p {

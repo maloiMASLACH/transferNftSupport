@@ -7,10 +7,12 @@ import {
   ChainInfo,
   IProviderRpcError,
   MetamaskWrapper,
+  networks,
   WalletsNames,
   WalletsWrapper,
 } from 'wallets-wrapper'
 
+import { config } from '@/config/config'
 import { chainData } from '@/constants/chainData'
 
 import { IMetamask } from './metamask.types'
@@ -57,7 +59,7 @@ export class Metamask implements IMetamask {
     try {
       const addresses = await this.wallet.getAddress()
 
-      return addresses[0]
+      return addresses[0] || ''
     } catch (error) {
       toast.error((error as IProviderRpcError).message)
       return ''
