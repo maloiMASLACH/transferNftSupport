@@ -1,0 +1,45 @@
+.nftWrapper {
+  display: flex;
+  flex-direction: column;
+  border-radius: 25px;
+  width: 300px;
+  height: 400px;
+  background-color: #f4f5f7;
+  transition: 0.3s;
+}
+
+.nftWrapper:hover {
+  transform: scale(1.03);
+}
+
+.nftWrapper .nftImage {
+  width: 100%;
+  height: 300px;
+  border-radius: 25px 25px 0 0;
+}
+
+.nftWrapper p {
+  font-family: sans-serif;
+  margin: 10px;
+  opacity: 0.7;
+}
+
+.nftWrapper .nftName {
+  font-size: x-large;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.nftWrapper .transferNft {
+  width: fit-content;
+  text-align: end;
+  cursor: pointer;
+  transition: 0.3s;
+  margin: auto 10px auto auto;
+}
+
+.nftWrapper .transferNft:hover {
+  opacity: 1;
+}
