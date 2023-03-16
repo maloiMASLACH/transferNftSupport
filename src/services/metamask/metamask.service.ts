@@ -80,7 +80,7 @@ export class Metamask implements IMetamask {
       const nativeWallet = await this.wallet.getWallet()
       await (nativeWallet as MetamaskWrapper).switchNetwork(chainData.chain)
     } catch (error) {
-      toast.error((error as IProviderRpcError).message)
+      toast.error('Switching network already requested')
     }
   }
 

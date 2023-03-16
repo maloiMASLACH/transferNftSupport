@@ -8,6 +8,7 @@ import { config } from '@/config/config'
 import customAbi from '@/config/erc721.abi.json'
 import { chainData } from '@/constants/chainData'
 import usersMockData from '@/constants/users.json'
+import usersTokensId from '@/constants/usersTokenIds.json'
 
 import { IMetamask } from '../metamask'
 import { IContract } from './contract.types'
@@ -53,21 +54,31 @@ export class Contract implements IContract {
   async getNftsByUserAddress() {
     try {
       if (this.metamask) {
+        let currentNetwork = null
         const address = await this.metamask.getAddress()
+        this.metamask.network$.subscribe((el) => (currentNetwork = el))
 
-        const nftsId: number[] = []
+        if (address && this.data$.getValue().network === currentNetwork) {
+          const activeUserNfts = Object.entries(usersTokensId).find((elem) => elem[0] === address)
 
-        const promises = []
-        for (let i = 1; i <= usersMockData.length; i++) {
-          const promise = this.contract.ownerOf(i)
-          promises.push(promise)
+          const nftsId: number[] = []
+
+          const promises: Promise<string>[] = []
+
+          if (activeUserNfts) {
+            for (let i = 0; i <= activeUserNfts[1].length - 1; i++) {
+              const promise = this.contract.ownerOf(activeUserNfts[1][i])
+              promises.push(promise)
+            }
+
+            await Promise.all(promises)
+              .then((results) =>
+                results.map((el, index) => el === address && nftsId.push(activeUserNfts[1][index])),
+              )
+              .catch((error) => console.error(error))
+          }
+          return nftsId
         }
-
-        await Promise.all(promises)
-          .then((results) => results.map((el, index) => el === address && nftsId.push(index + 1)))
-          .catch((error) => console.error(error))
-
-        return nftsId
       }
     } catch (error) {
       toast.error((error as Error).message)
@@ -105,7 +116,12 @@ export class Contract implements IContract {
         })
       }
     } catch (error) {
-      toast.error((error as IProviderRpcError).message)
+      console.log('🚀 ~ file: contract.service.ts:122 ~ Contract ~ transfer ~ error:', error)
+      toast.error(
+        (error as IProviderRpcError).message === 'Execution reverted'
+          ? 'You are not an owner'
+          : (error as IProviderRpcError).message,
+      )
     }
   }
 }

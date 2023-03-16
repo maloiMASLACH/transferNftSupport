@@ -33,7 +33,7 @@ export const NftCard: React.FC<NftCardProps> = ({ id }) => {
     transfer([id])
   }
 
-  return (
+  return cardData.name ? (
     <div className="nftWrapper">
       {cardData.url ? (
         <div
@@ -53,5 +53,5 @@ export const NftCard: React.FC<NftCardProps> = ({ id }) => {
         Transfer to project
       </p>
     </div>
-  )
+  ) : null
 }
